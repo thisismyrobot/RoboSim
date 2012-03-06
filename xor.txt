@@ -24,72 +24,73 @@ Firstly, we need a neural network to calculate the XOR function
 Now we need a trainer, and a map of the opposite of output combinations
 
     >>> import trainer
-    >>> t = trainer.Trainer(nn, {(0,):(1,), (1,):(0,)}, 10)
+    >>> t = trainer.Trainer(nn, 10)
 
 This neural network doesn't do XOR correctly, so lets train it, starting
 with 0, 0 which is incorrect initially
 
     >>> input = (0, 0)
-    >>> output = t.getoutputs(input)
+    >>> output = t.getoutput(input)
+    >>> output
+    (0,)
+
+    >>> t.good(input, output)
+    >>> t.train()
+
+    >>> t.getoutput(input)
+    (0,)
+
+    >>> input = (0, 1)
+    >>> output = t.getoutput(input)
     >>> output
     (0,)
 
     >>> t.bad(input, output)
     >>> t.train()
 
-    >>> t.getoutputs(input)
-    (1,)
-
-0, 1 and 1, 0 is ok already
-
-    >>> input = (0, 1)
-    >>> output = t.getoutputs(input)
-    >>> output
-    (1,)
-
-    >>> t.good(input, output)
-    >>> t.train()
-
-    >>> t.getoutputs(input)
+    >>> t.getoutput(input)
     (1,)
 
     >>> input = (1, 0)
-    >>> output = t.getoutputs(input)
+    >>> output = t.getoutput(input)
     >>> output
-    (1,)
+    (0,)
 
-    >>> t.good(input, output)
+    >>> t.bad(input, output)
     >>> t.train()
 
-    >>> output = t.getoutputs(input)
+    >>> output = t.getoutput(input)
     >>> output
     (1,)
 
-but the 1, 1 is not ok
-
     >>> input = (1, 1)
-    >>> output = t.getoutputs(input)
+    >>> output = t.getoutput(input)
     >>> output
     (1,)
 
     >>> t.bad(input, output)
     >>> t.train()
 
-    >>> t.getoutputs(input)
+    >>> t.getoutput(input)
     (0,)
+
+The trainer is now set up
+
+    >>> t.memory
+    deque([((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (0,))], maxlen=10)
 
 Now we can test it all at once
 
-    >>> t.getoutputs((0, 0))
+    >>> t.getoutput((0, 0))
     (0,)
 
-    >>> t.getoutputs((0, 1))
+    >>> t.getoutput((0, 1))
     (1,)
 
-    >>> t.getoutputs((1, 0))
+    >>> t.getoutput((1, 0))
     (1,)
 
-    >>> t.getoutputs((1, 1))
+    >>> t.getoutput((1, 1))
     (0,)
 
 
