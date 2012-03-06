@@ -5,7 +5,7 @@ class Trainer:
 
     def __init__(self, nn, memorysize):
         self.nn = nn
-        self.memory = collections.deque([], memorysize) #input=>target store
+        self.memory = collections.deque([], memorysize) # {input:target} store
 
     @staticmethod
     def _normalise(value):
