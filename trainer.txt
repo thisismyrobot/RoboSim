@@ -1,0 +1,8 @@
+Trainer
+=======
+
+Inversion of highest output val
+
+    >>> import trainer
+    >>> trainer.Trainer._invert((0.2, -0.1, 0.8))
+    (0.2, -0.1, 0.19999999999999996)

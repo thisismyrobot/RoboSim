@@ -1,11 +1,13 @@
 import collections
+import random
 
 
 class Trainer:
 
-    def __init__(self, nn, memorysize):
+    def __init__(self, nn, memorysize, whitelist):
         self.nn = nn
         self.memory = collections.deque([], memorysize) # {input:target} store
+        self.whitelist = whitelist
 
     @staticmethod
     def _normalise(value):
@@ -14,18 +16,30 @@ class Trainer:
         return 0
 
     @staticmethod
-    def _reverse(value):
-        return 1 - value
+    def _invert(outputs):
+        """ Inverts the highest value in a tuple.
+        """
+        outputs = list(outputs)
+        maxval = max(outputs)
+        index = outputs.index(maxval)
+        outputs[index] = 1 - maxval
+        return tuple(outputs)
+
+    def _whitelist(self, output):
+        if output not in self.whitelist:
+            output = random.choice(self.whitelist)
+        return output
 
     def getoutput(self, inputs):
-        return tuple(map(Trainer._normalise, self.nn.update(inputs)))
+        output = self._whitelist(tuple(map(Trainer._normalise, self.nn.update(inputs))))
+        return output
 
-    def bad(self, inputs, outputs):
-        targets = tuple(map(Trainer._reverse, outputs))
+    def bad(self, inputs):
+        targets = tuple(map(Trainer._normalise, Trainer._invert(self.nn.ao)))
         self.memory.append((inputs, targets))
 
-    def good(self, inputs, outputs):
-        targets = tuple(outputs)
+    def good(self, inputs):
+        targets = tuple(map(Trainer._normalise, self.nn.ao))
         self.memory.append((inputs, targets))
 
     def train(self, iterations=1000):

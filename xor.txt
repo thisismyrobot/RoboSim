@@ -21,10 +21,10 @@ Firstly, we need a neural network to calculate the XOR function
     >>> import libs.nn.backpropnn
     >>> nn = libs.nn.backpropnn.NN(2, 2, 1)
 
-Now we need a trainer, and a map of the opposite of output combinations
+Now we need a trainer
 
     >>> import trainer
-    >>> t = trainer.Trainer(nn, 10)
+    >>> t = trainer.Trainer(nn, 10, ((0,), (1,)))
 
 This neural network doesn't do XOR correctly, so lets train it, starting
 with 0, 0 which is incorrect initially
@@ -34,7 +34,7 @@ with 0, 0 which is incorrect initially
     >>> output
     (0,)
 
-    >>> t.good(input, output)
+    >>> t.good(input)
     >>> t.train()
 
     >>> t.getoutput(input)
@@ -45,7 +45,7 @@ with 0, 0 which is incorrect initially
     >>> output
     (0,)
 
-    >>> t.bad(input, output)
+    >>> t.bad(input)
     >>> t.train()
 
     >>> t.getoutput(input)
@@ -56,7 +56,7 @@ with 0, 0 which is incorrect initially
     >>> output
     (0,)
 
-    >>> t.bad(input, output)
+    >>> t.bad(input)
     >>> t.train()
 
     >>> output = t.getoutput(input)
@@ -68,7 +68,7 @@ with 0, 0 which is incorrect initially
     >>> output
     (1,)
 
-    >>> t.bad(input, output)
+    >>> t.bad(input)
     >>> t.train()
 
     >>> t.getoutput(input)

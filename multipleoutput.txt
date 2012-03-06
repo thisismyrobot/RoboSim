@@ -1,0 +1,89 @@
+Testing multiple outputs
+========================
+
+Introduction
+------------
+
+This is the step up from an XOR calculator - having a single output that is
+reversed when "wrong" is the same as training with "right" outputs.
+
+This time we are making a simple network with 4 outputs and 2 inputs. It will
+be a simple robot, with 2 inputs and outputs. The order is (left, right) for
+the two bumpers and (left, right, forward, reverse) for the robot directions.
+
+In action
+---------
+
+Firstly, we need a neural network to calculate the outputs
+
+    >>> import libs.nn.backpropnn
+    >>> nn = libs.nn.backpropnn.NN(2, 4, 4)
+
+Now we need a trainer
+
+    >>> import trainer
+    >>> t = trainer.Trainer(nn, 10, ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)))
+
+Firstly we need to be sure that it is not already pre-programmed - no bumpers
+pressed should mean go forward (0, 0, 1, 0).
+
+    >>> input = (0, 0)
+    >>> output = t.getoutput(input)
+    >>> output
+    (0, 0, 0, 1)
+
+Now we train it on each input
+
+    #no bumper = forward
+    >>> input = (0, 0)
+    >>> output = t.getoutput(input)
+    >>> output
+    (0, 0, 0, 1)
+
+    >>> t.bad(input)
+    >>> t.train()
+
+    >>> output = t.getoutput(input)
+    >>> output
+    (0, 0, 1, 0)
+
+    #left bumper = right
+    >>> input = (1, 0)
+    >>> output = t.getoutput(input)
+    >>> output
+    (0, 0, 1, 0)
+
+    >>> t.bad(input)
+    >>> t.train()
+
+    >>> output = t.getoutput(input)
+    >>> output
+    (0, 1, 0, 0)
+
+    #right bumper = left
+    >>> input = (0, 1)
+    >>> output = t.getoutput(input)
+    >>> output
+    (1, 0, 0, 0)
+
+
+The trainer is now set up
+
+    >>> t.memory
+    deque([((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (0,))], maxlen=10)
+
+Now we can test it all at once
+
+    >>> t.getoutput((0, 0))
+    (0,)
+
+    >>> t.getoutput((0, 1))
+    (1,)
+
+    >>> t.getoutput((1, 0))
+    (1,)
+
+    >>> t.getoutput((1, 1))
+    (0,)
+
+
