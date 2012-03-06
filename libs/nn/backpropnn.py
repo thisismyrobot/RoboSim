@@ -8,9 +8,6 @@ import math
 import random
 
 
-random.seed(0)
-
-
 # calculate a random number where:  a <= rand < b
 def rand(a, b):
     return (b-a)*random.random() + a
@@ -36,7 +33,9 @@ def dsigmoid(y):
 
 class NN:
 
-    def __init__(self, ni, nh, no):
+    def __init__(self, ni, nh, no, seed=0):
+        random.seed(seed)
+
         # number of input, hidden, and output nodes
         self.ni = ni + 1 # +1 for bias node
         self.nh = nh
@@ -127,53 +126,3 @@ class NN:
         for k in range(len(targets)):
             error = error + 0.5*(targets[k]-self.ao[k])**2
         return error
-
-
-    def test(self, patterns):
-        for p in patterns:
-            print p[0], '->', self.update(p[0])
-
-
-    def weights(self):
-        print 'Input weights:'
-        for i in range(self.ni):
-            print self.wi[i]
-        print
-        print 'Output weights:'
-        for j in range(self.nh):
-            print self.wo[j]
-
-
-    def train(self, patterns, iterations=1000, N=0.5, M=0.1):
-        # N: learning rate
-        # M: momentum factor
-        for i in xrange(iterations):
-            error = 0.0
-            for p in patterns:
-                inputs = p[0]
-                targets = p[1]
-                self.update(inputs)
-                error = error + self.backPropagate(targets, N, M)
-            if i % 100 == 0:
-                pass #print 'error %-14f' % error
-
-
-def demo():
-    # Teach network XOR function
-    pat = [
-        [[0,0], [0]],
-        [[0,1], [1]],
-        [[1,0], [1]],
-        [[1,1], [0]]
-    ]
-
-    # create a network with two input, two hidden, and one output nodes
-    n = NN(2, 2, 1)
-    # train it with some patterns
-    n.train(pat)
-    # test it
-    n.test(pat)
-
-
-if __name__ == '__main__':
-    demo()

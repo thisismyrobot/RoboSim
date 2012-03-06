@@ -1,0 +1,95 @@
+Basic XOR test of the good/bad nn trainer
+=========================================
+
+
+Introduction
+------------
+
+The premise here is pretty simple. Instead of defining a set of
+"correct" input/output pairs for training, we create a set of "opposite"
+outputs and use "good/bad" to trigger learning. If performing an output
+is "good" then the network is trained with the output it just performed.
+If performing an output is "bad" the network is trained with the
+opposite to the output.
+
+
+In action
+---------
+
+Firstly, we need a neural network to calculate the XOR function
+
+    >>> import libs.nn.backpropnn
+    >>> nn = libs.nn.backpropnn.NN(2, 2, 1)
+
+Now we need a trainer, and a map of the opposite of output combinations
+
+    >>> import trainer
+    >>> t = trainer.Trainer(nn, {(0,):(1,), (1,):(0,)}, 10)
+
+This neural network doesn't do XOR correctly, so lets train it, starting
+with 0, 0 which is incorrect initially
+
+    >>> input = (0, 0)
+    >>> output = t.getoutputs(input)
+    >>> output
+    (0,)
+
+    >>> t.bad(input, output)
+    >>> t.train()
+
+    >>> t.getoutputs(input)
+    (1,)
+
+0, 1 and 1, 0 is ok already
+
+    >>> input = (0, 1)
+    >>> output = t.getoutputs(input)
+    >>> output
+    (1,)
+
+    >>> t.good(input, output)
+    >>> t.train()
+
+    >>> t.getoutputs(input)
+    (1,)
+
+    >>> input = (1, 0)
+    >>> output = t.getoutputs(input)
+    >>> output
+    (1,)
+
+    >>> t.good(input, output)
+    >>> t.train()
+
+    >>> output = t.getoutputs(input)
+    >>> output
+    (1,)
+
+but the 1, 1 is not ok
+
+    >>> input = (1, 1)
+    >>> output = t.getoutputs(input)
+    >>> output
+    (1,)
+
+    >>> t.bad(input, output)
+    >>> t.train()
+
+    >>> t.getoutputs(input)
+    (0,)
+
+Now we can test it all at once
+
+    >>> t.getoutputs((0, 0))
+    (0,)
+
+    >>> t.getoutputs((0, 1))
+    (1,)
+
+    >>> t.getoutputs((1, 0))
+    (1,)
+
+    >>> t.getoutputs((1, 1))
+    (0,)
+
+
