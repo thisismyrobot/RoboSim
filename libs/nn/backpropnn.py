@@ -1,3 +1,9 @@
+# Original code downloaded from:
+# http://stackoverflow.com/a/3143318/577190
+#
+# Modifications trackable via:
+# https://github.com/thisismyrobot/BadDog/commits/master/libs/nn/backpropnn.py
+
 # Back-Propagation Neural Networks
 #
 # Written in Python.  See http://www.python.org/
