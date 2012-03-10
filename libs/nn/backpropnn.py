@@ -39,8 +39,11 @@ def dsigmoid(y):
 
 class NN:
 
-    def __init__(self, ni, nh, no, seed=0):
-        random.seed(seed)
+    def __init__(self, ni, nh, no, seed=None):
+        if seed is None:
+            random.seed()
+        else:
+            random.seed(seed)
 
         # number of input, hidden, and output nodes
         self.ni = ni + 1 # +1 for bias node
