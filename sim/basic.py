@@ -37,7 +37,8 @@ class Robot:
         return ((x % self.size) + 1) * ((y * self.size) + 1)
 
     def _passable(self, x, y):
-        return self.mapdata[y][x] in (Robot.ROBOT, Robot.FLOOR)
+        return (self.mapdata[y][x] in (Robot.ROBOT, Robot.FLOOR) and
+                x >= 0 and y >= 0 and x < self.size and y < self.size)
 
     def turnleft45(self):
         self.angle -= 45
