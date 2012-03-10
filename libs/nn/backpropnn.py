@@ -39,11 +39,7 @@ def dsigmoid(y):
 
 class NN:
 
-    def __init__(self, ni, nh, no, seed=None):
-        if seed is None:
-            random.seed()
-        else:
-            random.seed(seed)
+    def __init__(self, ni, nh, no):
 
         # number of input, hidden, and output nodes
         self.ni = ni + 1 # +1 for bias node
@@ -58,6 +54,9 @@ class NN:
         # create weights
         self.wi = makeMatrix(self.ni, self.nh)
         self.wo = makeMatrix(self.nh, self.no)
+
+    def setup_weights(self):
+
         # set them to random vaules
         for i in range(self.ni):
             for j in range(self.nh):
@@ -77,7 +76,6 @@ class NN:
 
         # input activations
         for i in range(self.ni-1):
-            #self.ai[i] = sigmoid(inputs[i])
             self.ai[i] = inputs[i]
 
         # hidden activations

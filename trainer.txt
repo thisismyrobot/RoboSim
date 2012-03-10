@@ -1,8 +1,26 @@
 Trainer
 =======
 
-Inversion of highest output val
+Normalise outputs to -1/1
 
     >>> import trainer
-    >>> trainer.Trainer._invert((0.2, -0.1, 0.8))
-    (0.2, -0.1, 0.19999999999999996)
+    >>> trainer.Trainer._normalise(0.6)
+    1
+
+    >>> trainer.Trainer._normalise(0.5)
+    0
+
+    >>> trainer.Trainer._normalise(0.3)
+    0
+
+Mutate parts of an output
+
+    >>> import libs.nn.backpropnn
+    >>> nn = libs.nn.backpropnn.NN(2, 2, 5)
+    >>> t = trainer.Trainer(nn, None, 0)
+    >>> t._lastoutput
+    [0, 0, 0, 0, 0]
+
+    >>> t._mutate()
+    >>> t._lastoutput
+    [0.9..., 0.9..., 0, 0, 0.6...]

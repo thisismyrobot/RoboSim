@@ -24,60 +24,84 @@ Firstly, we need a neural network to calculate the XOR function
 Now we need a trainer
 
     >>> import trainer
-    >>> t = trainer.Trainer(nn, 10, ((0,), (1,)))
+    >>> t = trainer.Trainer(nn, 10, 0)
 
-This neural network doesn't do XOR correctly, so lets train it, starting
-with 0, 0 which is incorrect initially
+This neural network doesn't do XOR correctly, so lets train it. Firstly
+we train on 0, 0 and show the memory as we go.
 
     >>> input = (0, 0)
-    >>> output = t.getoutput(input)
-    >>> output
-    (0,)
-
-    >>> t.good(input)
-    >>> t.train()
-
     >>> t.getoutput(input)
     (0,)
+
+    >>> t.good()
+    >>> t.memory
+    deque([((0, 0), (0,))], maxlen=10)
+
+    >>> t.getoutput()
+    (0,)
+
+Then on 0, 1
 
     >>> input = (0, 1)
-    >>> output = t.getoutput(input)
-    >>> output
+    >>> t.getoutput(input)
     (0,)
 
-    >>> t.bad(input)
-    >>> t.train()
+    >>> t.bad()
+    (0,)
 
-    >>> t.getoutput(input)
+    >>> t.bad()
+    (0,)
+
+    >>> t.bad()
     (1,)
+
+    >>> t.good()
+    >>> t.memory
+    deque([((0, 0), (0,)), ((0, 1), (1,))], maxlen=10)
+
+    >>> t.getoutput()
+    (1,)
+
+Then 1, 0
 
     >>> input = (1, 0)
-    >>> output = t.getoutput(input)
-    >>> output
-    (0,)
-
-    >>> t.bad(input)
-    >>> t.train()
-
-    >>> output = t.getoutput(input)
-    >>> output
-    (1,)
-
-    >>> input = (1, 1)
-    >>> output = t.getoutput(input)
-    >>> output
-    (1,)
-
-    >>> t.bad(input)
-    >>> t.train()
-
     >>> t.getoutput(input)
     (0,)
 
-The trainer is now set up
+    >>> t.bad()
+    (0,)
 
+    >>> t.bad()
+    (1,)
+
+    >>> t.good()
+    >>> t.getoutput()
+    (1,)
+
+Then 1, 1
+
+    >>> input = (1, 1)
+    >>> t.getoutput(input)
+    (1,)
+
+    >>> t.bad()
+    (1,)
+
+    >>> t.bad()
+    (1,)
+
+    >>> import random
+    >>> random.seed(93)
+
+    >>> t.bad()
+    (0,)
+
+    >>> t.good()
     >>> t.memory
     deque([((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (0,))], maxlen=10)
+
+    >>> t.getoutput()
+    (0,)
 
 Now we can test it all at once
 
@@ -92,5 +116,3 @@ Now we can test it all at once
 
     >>> t.getoutput((1, 1))
     (0,)
-
-
