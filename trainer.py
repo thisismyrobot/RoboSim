@@ -9,7 +9,7 @@ class Trainer:
          3. good() or bad()
     """
 
-    def __init__(self, nn, memorysize, seed):
+    def __init__(self, nn, memorysize, statesets, seed=None):
 
         if seed is None:
             random.seed()
@@ -20,18 +20,31 @@ class Trainer:
         self.nn.setup_weights()
 
         self.memory = collections.deque([], memorysize) # {input:target} store
+        self.statesets = statesets
+
         self._lastinput = [0]*len(self.nn.ai)
         self._lastoutput = [0]*len(self.nn.ao)
 
+    @property
+    def _freeoutputs(self):
+        stateoutputs = []
+        for sset in self.statesets:
+            stateoutputs.extend(range(sset[0], sset[1] + 1))
+        return [i for i in range(len(self.nn.ao)) if i not in stateoutputs]
+
     def _mutate(self):
-        self._lastoutput = [random.random()
-                            if random.random() > 0.75 else o
-                            for o
-                            in self._lastoutput]
+        for i in self._freeoutputs:
+            if random.random() > 0.75:
+                self._lastoutput[i] = random.random()
+        for s in self.statesets:
+            if random.random() > 0.75:
+                for i in range(s[0], s[1] + 1):
+                    self._lastoutput[i] = 0
+                self._lastoutput[random.randint(s[0], s[1])] = random.random()
 
     @staticmethod
     def _normalise(value):
-        if value > 0.5:
+        if value >= 0.5:
             return 1
         return 0
 

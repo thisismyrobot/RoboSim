@@ -24,7 +24,7 @@ Firstly, we need a neural network to calculate the XOR function
 Now we need a trainer
 
     >>> import trainer
-    >>> t = trainer.Trainer(nn, 10, 0)
+    >>> t = trainer.Trainer(nn, 10, (), 0)
 
 This neural network doesn't do XOR correctly, so lets train it. Firstly
 we train on 0, 0 and show the memory as we go.

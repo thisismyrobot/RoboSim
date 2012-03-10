@@ -3,11 +3,8 @@
 import doctest
 
 
-doctest.testfile("trainer.txt",
-    optionflags=doctest.REPORT_ONLY_FIRST_FAILURE|doctest.ELLIPSIS)
+files = ("trainer.txt", "xor.txt", "multipleoutput.txt")
+opts = doctest.REPORT_ONLY_FIRST_FAILURE|doctest.ELLIPSIS
 
-doctest.testfile("xor.txt",
-    optionflags=doctest.REPORT_ONLY_FIRST_FAILURE|doctest.ELLIPSIS)
-
-#doctest.testfile("multipleoutput.txt",
-#    optionflags=doctest.REPORT_ONLY_FIRST_FAILURE|doctest.ELLIPSIS)
+for f in files:
+    doctest.testfile(f, optionflags=opts)

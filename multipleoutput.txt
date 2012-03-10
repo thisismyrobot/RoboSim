@@ -5,11 +5,14 @@ Introduction
 ------------
 
 This is the step up from an XOR calculator - having a single output that is
-reversed when "wrong" is the same as training with "right" outputs.
+mutated when "bad" is almost the same as training with "good" outputs.
 
-This time we are making a simple network with 4 outputs and 2 inputs. It will
-be a simple robot, with 2 inputs and outputs. The order is (left, right) for
-the two bumpers and (left, right, forward, reverse) for the robot directions.
+This time we are making a simple network with 4 outputs and 2 inputs - a
+simple robot. The order is (left, right) for the two bumpers and (left, right,
+forward, reverse) for the robot directions. Left is clockwise from a birds-eye
+view, the direction steers a castor so the robot has to be moving to turn.
+
+"Good" is movement, "Bad" is no movement/stuck against something.
 
 In action
 ---------
@@ -17,73 +20,99 @@ In action
 Firstly, we need a neural network to calculate the outputs
 
     >>> import libs.nn.backpropnn
-    >>> nn = libs.nn.backpropnn.NN(2, 4, 4)
+    >>> nn = libs.nn.backpropnn.NN(2, 3, 4)
 
-Now we need a trainer
+For the trainer we need to know which outputs are "state-sets" - ie, at most
+one can be "on" at once - this stops invalid mutations happening, speeding up
+the learning process. The numbers are output indexes covering a span. In this
+instance they stop forward and reverse being on at the same time as well as
+left and right being chosen at the same time. These may also be used to
+prevent hardware damage - eg with the use of an H-Bridge for forward-back.
 
     >>> import trainer
-    >>> t = trainer.Trainer(nn, 10, ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)))
+    >>> statesets = ((0, 1), (2, 3))
+    >>> t = trainer.Trainer(nn, 10, statesets, 0)
+
+    >>> t._freeoutputs
+    []
 
 Firstly we need to be sure that it is not already pre-programmed - no bumpers
 pressed should mean go forward (0, 0, 1, 0).
 
     >>> input = (0, 0)
-    >>> output = t.getoutput(input)
-    >>> output
-    (0, 0, 0, 1)
+    >>> t.getoutput(input)
+    (0, 0, 0, 0)
 
-Now we train it on each input
+Now we train it, accepting when it is "good" - in this instance moving forward
+at all when there's no bumpers being pressed.
 
-    #no bumper = forward
-    >>> input = (0, 0)
-    >>> output = t.getoutput(input)
-    >>> output
-    (0, 0, 0, 1)
+    >>> i = 1
+    >>> while t.bad()[2] != 1:
+    ...     i += 1
+    >>> i
+    1
 
-    >>> t.bad(input)
-    >>> t.train()
+        >>> t.good()
 
-    >>> output = t.getoutput(input)
-    >>> output
-    (0, 0, 1, 0)
+If we hit a wall with the left bumper, forward right is ok, as is reversing to
+the left.
 
-    #left bumper = right
     >>> input = (1, 0)
-    >>> output = t.getoutput(input)
-    >>> output
+    >>> t.getoutput(input)
     (0, 0, 1, 0)
 
-    >>> t.bad(input)
-    >>> t.train()
+    >>> i = 0
+    >>> while t.bad() not in ((0, 1, 1, 0), (1, 0, 0, 1)):
+    ...     i += 1
+    >>> i
+    21
 
-    >>> output = t.getoutput(input)
-    >>> output
-    (0, 1, 0, 0)
+    >>> t.good()
 
-    #right bumper = left
+The opposite is the case with the right bumper
+
     >>> input = (0, 1)
-    >>> output = t.getoutput(input)
-    >>> output
-    (1, 0, 0, 0)
+    >>> t.getoutput(input)
+    (0, 0, 1, 0)
 
+    >>> i = 0
+    >>> while t.bad() not in ((1, 0, 1, 0), (0, 1, 0, 1)):
+    ...     i += 1
+    >>> i
+    19
 
-The trainer is now set up
+    >>> t.good()
+
+And if we hit the wall with both bumpers we want reverse and possibly a
+direction.
+
+    >>> input = (1, 1)
+    >>> t.getoutput(input)
+    (1, 1, 1, 0)
+
+    >>> i = 0
+    >>> while t.bad()[3] != 1:
+    ...     i += 1
+    >>> i
+    35
+
+    >>> t.good()
+
+The memory should be programmed now
 
     >>> t.memory
-    deque([((0, 0), (0,)), ((0, 1), (1,)), ((1, 0), (1,)), ((1, 1), (0,))], maxlen=10)
+    deque([((0, 0), (0, 0, 1, 0)), ((1, 0), (0, 1, 1, 0)), ((0, 1), (1, 0, 1, 0)), ((1, 1), (0, 0, 0, 1))], maxlen=10)
 
 Now we can test it all at once
 
     >>> t.getoutput((0, 0))
-    (0,)
+    (0, 0, 1, 0)
 
     >>> t.getoutput((0, 1))
-    (1,)
+    (1, 0, 1, 0)
 
     >>> t.getoutput((1, 0))
-    (1,)
+    (0, 1, 1, 0)
 
     >>> t.getoutput((1, 1))
-    (0,)
-
-
+    (1, 0, 0, 1)
