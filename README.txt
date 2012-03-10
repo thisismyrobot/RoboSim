@@ -28,3 +28,10 @@ massive fundamental flaw :)
  3. Analogue inputs
  4. Linear analogue outputs
  5. A set of tests to help understand the effects of the variables
+
+Requirements
+============
+
+This has been developed/tested on:
+ * Ubuntu 11.10
+ * Python 2.7.2+
