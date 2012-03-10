@@ -20,7 +20,7 @@ In action
 Firstly, we need a neural network to calculate the outputs
 
     >>> import libs.nn.backpropnn
-    >>> nn = libs.nn.backpropnn.NN(2, 3, 4)
+    >>> nn = libs.nn.backpropnn.NN(2, 5, 4)
 
 For the trainer we need to know which outputs are "state-sets" - ie, at most
 one can be "on" at once - this stops invalid mutations happening, speeding up
@@ -41,7 +41,7 @@ pressed should mean go forward (0, 0, 1, 0).
 
     >>> input = (0, 0)
     >>> t.getoutput(input)
-    (0, 0, 0, 0)
+    (0, 0, 1, 0)
 
 Now we train it, accepting when it is "good" - in this instance moving forward
 at all when there's no bumpers being pressed.
@@ -65,7 +65,7 @@ the left.
     >>> while t.bad() not in ((0, 1, 1, 0), (1, 0, 0, 1)):
     ...     i += 1
     >>> i
-    21
+    17
 
     >>> t.good()
 
@@ -115,4 +115,4 @@ Now we can test it all at once
     (0, 1, 1, 0)
 
     >>> t.getoutput((1, 1))
-    (1, 0, 0, 1)
+    (0, 0, 0, 1)
