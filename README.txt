@@ -41,9 +41,9 @@ Print out a pretty map view
 
 Control the robot
 
-    >>> sim.robot.forward()
+    >>> sim.robot.move(1) # forward
     >>> sim.robot.turn(3) # clockwise 135 degrees
-    >>> sim.robot.forward()
+    >>> sim.robot.move(-1) # reverse
     >>> sim.robot.turn(-2) # anticlockwise 90 degrees
 
 Read the two sensors on the front of the robot

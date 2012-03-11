@@ -62,7 +62,7 @@ Basic movement
 
 The robot starts facing upwards so will move that way if sent forwards
 
-    >>> s.robot.forward()
+    >>> s.robot.move(1)
     >>> print(s)
     /--------\
     |00000000|
@@ -90,11 +90,25 @@ The robot can turn
     |00000000|
     \--------/
 
-    >>> s.robot.forward()
+    >>> s.robot.move(1)
     >>> print(s)
     /--------\
     |0R000000|
     |00000000|
+    |00000000|
+    |00001000|
+    |00001000|
+    |00001000|
+    |00000000|
+    |00000000|
+    \--------/
+
+    >>> s.robot.turn(2)
+    >>> s.robot.move(-1)
+    >>> print(s)
+    /--------\
+    |00000000|
+    |R0000000|
     |00000000|
     |00001000|
     |00001000|
@@ -111,6 +125,8 @@ The robot has sensors that register that the robot is againsts things
 like walls - the map edge is a wall. The sensors are at 45 degrees from
 center on the front, face on collisions trigger both.
 
+    >>> s.robot.move(1)
+    >>> s.robot.turn(-2)
     >>> s.robot.angle
     315
 
@@ -145,17 +161,17 @@ You can't go through the edge of the map
     >>> s.robot.x, s.robot.y
     (1, 0)
 
-    >>> s.robot.forward()
+    >>> s.robot.move(1)
     >>> s.robot.x, s.robot.y
     (1, 0)
 
     >>> s.robot.turn(3);
-    >>> s.robot.forward()
-    >>> s.robot.forward()
+    >>> s.robot.move(1)
+    >>> s.robot.move(1)
     >>> s.robot.x, s.robot.y
     (3, 2)
 
-    >>> s.robot.forward()
+    >>> s.robot.move(1)
     >>> s.robot.x, s.robot.y
     (3, 2)
 
@@ -183,7 +199,7 @@ Simulation
     ...         s.robot.turn(-2)
     ...     elif random.random() > 0.75:
     ...         s.robot.turn(1)
-    ...     s.robot.forward()
+    ...     s.robot.move(1)
     ...     locs.append((s.robot.x, s.robot.y))
 
     >>> locs

@@ -29,6 +29,21 @@ class Robot(object):
         self.angle = self.sim.fixangle(self.angle + (45 * ticks))
         self._updatesensors()
 
+    def move(self, direction):
+        """ Moves the robot one step - 1=forward, -1=reverse.
+        """
+        x, y = 0, 0
+        if direction == 1:
+            x, y = self.sim.location(self.x, self.y, self.angle)
+        elif direction == -1:
+            x, y = self.sim.location(self.x, self.y, self.sim.fixangle(self.angle + 180))
+        else:
+            return
+        if self.sim.passable((x, y)):
+            self.x = x
+            self.y = y
+        self._updatesensors()
+
     def _updatesensors(self):
         self.hit = [False, False]
         if not self.sim.passable(self.sim.location(self.x, self.y, self.sim.fixangle(self.angle - 45))):
@@ -42,13 +57,6 @@ class Robot(object):
             (self.angle % 45 != 0 and not
              self.sim.passable(self.sim.location(self.x, self.y, self.angle)))):
              self.hit = [True, True]
-
-    def forward(self):
-        x, y = self.sim.location(self.x, self.y, self.angle)
-        if self.sim.passable((x, y)):
-            self.x = x
-            self.y = y
-        self._updatesensors()
 
 
 class Sim(object):
