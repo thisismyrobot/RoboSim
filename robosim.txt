@@ -19,7 +19,6 @@ And a sim
 
 And a robot
 
-    >>> import robosim
     >>> robot = robosim.Robot(2, 2)
     >>> s.setrobot(robot)
 
@@ -57,6 +56,7 @@ We can use all sorts of sizes for the maps too
     |00100000|
     \--------/
 
+
 Basic movement
 --------------
 
@@ -77,7 +77,7 @@ The robot starts facing upwards so will move that way if sent forwards
 
 The robot can turn
 
-    >>> s.robot.turnleft45()
+    >>> s.robot.turn(-1)
     >>> print(s)
     /--------\
     |00000000|
@@ -132,7 +132,7 @@ center on the front, face on collisions trigger both.
     >>> s.robot.hit
     [False, True]
 
-    >>> s.robot.turnright45()
+    >>> s.robot.turn(1)
     >>> s.robot.hit
     [True, True]
 
@@ -149,8 +149,7 @@ You can't go through the edge of the map
     >>> s.robot.x, s.robot.y
     (1, 0)
 
-    >>> s.robot.turnright90();
-    >>> s.robot.turnright45();
+    >>> s.robot.turn(3);
     >>> s.robot.forward()
     >>> s.robot.forward()
     >>> s.robot.x, s.robot.y
@@ -163,7 +162,7 @@ You can't go through the edge of the map
     >>> s.robot.hit
     [True, True]
 
-    >>> s.robot.turnleft45()
+    >>> s.robot.turn(-1)
     >>> s.robot.hit
     [False, True]
 
@@ -177,15 +176,17 @@ Simulation
     >>> for i in range(20):
     ...     hits = s.robot.hit
     ...     if hits[0] and hits[1]:
-    ...         s.robot.turn180()
+    ...         s.robot.turn(4)
     ...     elif hits[0]:
-    ...         s.robot.turnright90()
+    ...         s.robot.turn(2)
     ...     elif hits[1]:
-    ...         s.robot.turnleft90()
+    ...         s.robot.turn(-2)
     ...     elif random.random() > 0.75:
-    ...         s.robot.turnright45()
+    ...         s.robot.turn(1)
     ...     s.robot.forward()
     ...     locs.append((s.robot.x, s.robot.y))
 
     >>> locs
-    [(3, 1), (4, 0), (5, 1), (5, 2), (6, 2), (7, 2), (6, 2), (5, 2), (5, 1), (5, 0), (5, 1), (5, 2), (6, 2), (7, 3), (6, 4), (5, 5), (6, 6), (7, 7), (6, 6), (5, 5)]
+    [(3, 1), (4, 0), (5, 1)...(6, 6), (5, 5)]
+
+

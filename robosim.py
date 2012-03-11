@@ -18,24 +18,15 @@ class Robot(object):
         self.angle = 0
         self.hit = [False, False]
 
-    def turnleft45(self):
-        self.angle = self.sim.fixangle(self.angle - 45)
-        self._updatesensors()
-
-    def turnright45(self):
-        self.angle = self.sim.fixangle(self.angle + 45)
-        self._updatesensors()
-
-    def turnleft90(self):
-        self.angle = self.sim.fixangle(self.angle - 90)
-        self._updatesensors()
-
-    def turnright90(self):
-        self.angle = self.sim.fixangle(self.angle + 90)
-        self._updatesensors()
-
-    def turn180(self):
-        self.angle = self.sim.fixangle(self.angle + 180)
+    def turn(self, ticks):
+        """ Turns the robot by -4 -> +4 ticks, each tick is 45 degrees.
+        """
+        ticks = int(ticks)
+        if ticks > 4:
+            ticks = 4
+        if ticks < -4:
+            ticks = -4
+        self.angle = self.sim.fixangle(self.angle + (45 * ticks))
         self._updatesensors()
 
     def _updatesensors(self):
@@ -66,7 +57,7 @@ class Sim(object):
     """
 
     def __init__(self, mapdata):
-        """ Setup, load the mapfile.
+        """ Setup the map from its data.
         """
         self.mapdata = mapdata
         self.mapwidth = len(mapdata[0])
