@@ -14,8 +14,8 @@ We need a map.
 
 And a robot sim
 
-    >>> import sim.basic
-    >>> r = sim.basic.Robot(8, amap, 2, 2)
+    >>> import basic
+    >>> r = basic.Robot(8, amap, 2, 2)
 
 That now has the map set up
 
