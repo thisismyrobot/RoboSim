@@ -1,5 +1,5 @@
-A robot simulator
-=================
+A Python mobile robot simulator
+===============================
 
 A very very simple one at that :)
 
