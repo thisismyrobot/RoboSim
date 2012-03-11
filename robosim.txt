@@ -12,65 +12,95 @@ We need a map.
     ...         [0, 0, 0, 0, 0, 0, 0, 0],
     ...         [0, 0, 0, 0, 0, 0, 0, 0]]
 
-And a robot sim
+And a robot
 
-    >>> import basic
-    >>> r = basic.Robot(8, amap, 2, 2)
+    >>> import robosim
+    >>> robot = robosim.Robot(2, 2)
+
+Now we can setup the static Sim
+
+    >>> robosim.Sim.setup(amap, robot)
 
 That now has the map set up
 
-    >>> import pprint
-    >>> pp = pprint.PrettyPrinter()
-    >>> pp.pprint(r.state)
-    [[0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 8, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0]]
+    >>> print(robosim.Sim)
+    /--------\
+    |00000000|
+    |00000000|
+    |00R00000|
+    |00001000|
+    |00001000|
+    |00001000|
+    |00000000|
+    |00000000|
+    \--------/
 
+We can use all sorts of sizes for the maps too
+
+    >>> anothermap = [[0, 0, 0, 1, 0, 0, 0, 0],
+    ...               [0, 0, 0, 0, 0, 0, 1, 1],
+    ...               [0, 0, 1, 0, 0, 0, 0, 0]]
+    >>> robosim.Sim.setup(anothermap, robosim.Robot(2, 1))
+    >>> robosim.Sim.mapwidth
+    8
+
+    >>> robosim.Sim.mapheight
+    3
+
+    >>> print(robosim.Sim)
+    /--------\
+    |00010000|
+    |00R00011|
+    |00100000|
+    \--------/
+
+    >>> robosim.Sim.setup(amap, robot)
 
 Basic movement
 --------------
 
 The robot starts facing upwards so will move that way if sent forwards
 
-    >>> r.forward()
-    >>> pp.pprint(r.state)
-    [[0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 8, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0]]
+    >>> robosim.Sim.robot.forward()
+    >>> print(robosim.Sim)
+    /--------\
+    |00000000|
+    |00R00000|
+    |00000000|
+    |00001000|
+    |00001000|
+    |00001000|
+    |00000000|
+    |00000000|
+    \--------/
 
 The robot can turn
 
-    >>> r.turnleft45()
-    >>> pp.pprint(r.state)
-    [[0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 8, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0]]
+    >>> robosim.Sim.robot.turnleft45()
+    >>> print(robosim.Sim)
+    /--------\
+    |00000000|
+    |00R00000|
+    |00000000|
+    |00001000|
+    |00001000|
+    |00001000|
+    |00000000|
+    |00000000|
+    \--------/
 
-    >>> r.forward()
-    >>> pp.pprint(r.state)
-    [[0, 8, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 1, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0],
-     [0, 0, 0, 0, 0, 0, 0, 0]]
+    >>> robosim.Sim.robot.forward()
+    >>> print(robosim.Sim)
+    /--------\
+    |0R000000|
+    |00000000|
+    |00000000|
+    |00001000|
+    |00001000|
+    |00001000|
+    |00000000|
+    |00000000|
+    \--------/
 
 
 Sensors
@@ -80,29 +110,29 @@ The robot has sensors that register that the robot is againsts things
 like walls - the map edge is a wall. The sensors are at 45 degrees from
 center on the front, face on collisions trigger both.
 
-    >>> r.angle
+    >>> robosim.Sim.robot.angle
     315
 
-    >>> r._fixangle(r.angle - 45)
+    >>> robosim.Sim.fixangle(robosim.Sim.robot.angle - 45)
     270
 
-    >>> r._fixangle(r.angle + 45)
+    >>> robosim.Sim.fixangle(robosim.Sim.robot.angle + 45)
     0
 
-    >>> r._location(r.x, r.y, 315)
+    >>> robosim.Sim.location(robosim.Sim.robot.x, robosim.Sim.robot.y, 315)
     (0, -1)
 
-    >>> r._location(r.x, r.y, 270)
+    >>> robosim.Sim.location(robosim.Sim.robot.x, robosim.Sim.robot.y, 270)
     (0, 0)
 
-    >>> r._location(r.x, r.y, 0)
+    >>> robosim.Sim.location(robosim.Sim.robot.x, robosim.Sim.robot.y, 0)
     (1, -1)
 
-    >>> r.hit
+    >>> robosim.Sim.robot.hit
     [False, True]
 
-    >>> r.turnright45()
-    >>> r.hit
+    >>> robosim.Sim.robot.turnright45()
+    >>> robosim.Sim.robot.hit
     [True, True]
 
 
@@ -111,29 +141,29 @@ Walls
 
 You can't go through the edge of the map
 
-    >>> r.x, r.y
+    >>> robosim.Sim.robot.x, robosim.Sim.robot.y
     (1, 0)
 
-    >>> r.forward()
-    >>> r.x, r.y
+    >>> robosim.Sim.robot.forward()
+    >>> robosim.Sim.robot.x, robosim.Sim.robot.y
     (1, 0)
 
-    >>> r.turnright90();
-    >>> r.turnright45();
-    >>> r.forward()
-    >>> r.forward()
-    >>> r.x, r.y
+    >>> robosim.Sim.robot.turnright90();
+    >>> robosim.Sim.robot.turnright45();
+    >>> robosim.Sim.robot.forward()
+    >>> robosim.Sim.robot.forward()
+    >>> robosim.Sim.robot.x, robosim.Sim.robot.y
     (3, 2)
 
-    >>> r.forward()
-    >>> r.x, r.y
+    >>> robosim.Sim.robot.forward()
+    >>> robosim.Sim.robot.x, robosim.Sim.robot.y
     (3, 2)
 
-    >>> r.hit
+    >>> robosim.Sim.robot.hit
     [True, True]
 
-    >>> r.turnleft45()
-    >>> r.hit
+    >>> robosim.Sim.robot.turnleft45()
+    >>> robosim.Sim.robot.hit
     [False, True]
 
 
@@ -144,32 +174,17 @@ Simulation
     >>> random.seed(0)
     >>> locs = []
     >>> for i in range(20):
-    ...     hits = r.hit
+    ...     hits = robosim.Sim.robot.hit
     ...     if hits[0] and hits[1]:
-    ...         r.turn180()
+    ...         robosim.Sim.robot.turn180()
     ...     elif hits[0]:
-    ...         r.turnright90()
+    ...         robosim.Sim.robot.turnright90()
     ...     elif hits[1]:
-    ...         r.turnleft90()
+    ...         robosim.Sim.robot.turnleft90()
     ...     elif random.random() > 0.75:
-    ...         r.turnright45()
-    ...     r.forward()
-    ...     locs.append((r.x, r.y))
+    ...         robosim.Sim.robot.turnright45()
+    ...     robosim.Sim.robot.forward()
+    ...     locs.append((robosim.Sim.robot.x, robosim.Sim.robot.y))
 
-    >>> import copy
-    >>> state = copy.deepcopy(r.state)
-    >>> state[2][3] = 9
-    >>> for i in range(len(locs)):
-    ...     x, y = locs[i][0], locs[i][1]
-    ...     state[y][x] = 8
-    >>> pp.pprint(state)
-    [[0, 0, 0, 0, 8, 8, 0, 0],
-     [0, 0, 0, 8, 0, 8, 0, 0],
-     [0, 0, 0, 9, 0, 8, 8, 8],
-     [0, 0, 0, 0, 1, 0, 0, 8],
-     [0, 0, 0, 0, 1, 0, 8, 0],
-     [0, 0, 0, 0, 1, 8, 0, 0],
-     [0, 0, 0, 0, 0, 0, 8, 0],
-     [0, 0, 0, 0, 0, 0, 0, 8]]
-
-
+    >>> locs
+    [(3, 1), (4, 0), (5, 1), (5, 2), (6, 2), (7, 2), (6, 2), (5, 2), (5, 1), (5, 0), (5, 1), (5, 2), (6, 2), (7, 3), (6, 4), (5, 5), (6, 6), (7, 7), (6, 6), (5, 5)]
