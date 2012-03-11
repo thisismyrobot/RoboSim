@@ -74,8 +74,12 @@ class Sim(object):
     def __str__(self):
         mapcopy = copy.deepcopy(self.mapdata)
         mapcopy[self.robot.y][self.robot.x] = "R"
-        visual = ""
+
+        visual = "X: " + str(self.robot.x) + "\n"
+        visual += "Y: " + str(self.robot.y) + "\n"
+        visual += "DIR: " + str(self.robot.angle) + "\n\n"
         visual += "/".ljust(self.mapwidth + 1, "-") + "\\\n"
+
         for row in range(self.mapheight):
             for col in range(self.mapwidth):
                 if col == 0:
@@ -84,6 +88,7 @@ class Sim(object):
                 if col == self.mapwidth - 1:
                     visual += "|"
             visual += "\n"
+
         visual += "\\".ljust(self.mapwidth + 1, "-") + "/"
         return visual
 

@@ -25,6 +25,10 @@ And a robot
 That now has the map set up
 
     >>> print(s)
+    X: 2
+    Y: 2
+    DIR: 0
+    <BLANKLINE>
     /--------\
     |00000000|
     |00000000|
@@ -50,6 +54,10 @@ We can use all sorts of sizes for the maps too
     3
 
     >>> print(s2)
+    X: 2
+    Y: 1
+    DIR: 0
+    <BLANKLINE>
     /--------\
     |00010000|
     |00R00011|
@@ -64,6 +72,10 @@ The robot starts facing upwards so will move that way if sent forwards
 
     >>> s.robot.move(1)
     >>> print(s)
+    X: 2
+    Y: 1
+    DIR: 0
+    <BLANKLINE>
     /--------\
     |00000000|
     |00R00000|
@@ -79,6 +91,10 @@ The robot can turn
 
     >>> s.robot.turn(-1)
     >>> print(s)
+    X: 2
+    Y: 1
+    DIR: 315
+    <BLANKLINE>
     /--------\
     |00000000|
     |00R00000|
@@ -92,6 +108,10 @@ The robot can turn
 
     >>> s.robot.move(1)
     >>> print(s)
+    X: 1
+    Y: 0
+    DIR: 315
+    <BLANKLINE>
     /--------\
     |0R000000|
     |00000000|
@@ -106,6 +126,10 @@ The robot can turn
     >>> s.robot.turn(2)
     >>> s.robot.move(-1)
     >>> print(s)
+    X: 0
+    Y: 1
+    DIR: 45
+    <BLANKLINE>
     /--------\
     |00000000|
     |R0000000|
