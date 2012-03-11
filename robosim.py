@@ -13,6 +13,8 @@ class Robot(object):
     """
 
     def __init__(self, x, y):
+        """ set up the robot.
+        """
         self.x = x
         self.y = y
         self.angle = 0
@@ -36,7 +38,8 @@ class Robot(object):
         if direction == 1:
             x, y = self.sim.location(self.x, self.y, self.angle)
         elif direction == -1:
-            x, y = self.sim.location(self.x, self.y, self.sim.fixangle(self.angle + 180))
+            x, y = self.sim.location(self.x, self.y,
+                                     self.sim.fixangle(self.angle + 180))
         else:
             return
         if self.sim.passable((x, y)):
@@ -45,18 +48,20 @@ class Robot(object):
         self._updatesensors()
 
     def _updatesensors(self):
+        """ Update the status of the sensors based on location.
+        """
+        sim, x, y, angle = self.sim, self.x, self.y, self.angle
         self.hit = [False, False]
-        if not self.sim.passable(self.sim.location(self.x, self.y, self.sim.fixangle(self.angle - 45))):
+        if not sim.passable(sim.location(x, y, sim.fixangle(angle - 45))):
             self.hit[0] = True
-        if not self.sim.passable(self.sim.location(self.x, self.y, self.sim.fixangle(self.angle + 45))):
+        if not sim.passable(sim.location(x, y, sim.fixangle(angle + 45))):
             self.hit[1] = True
-        if ((self.hit == [False, False] and
-             self.angle % 45 == 0 and not
-             self.sim.passable(self.sim.location(self.x, self.y, self.angle)))
+        if ((self.hit == [False, False] and self.angle % 45 == 0 and not
+             self.sim.passable(sim.location(x, y, angle)))
             or
             (self.angle % 45 != 0 and not
-             self.sim.passable(self.sim.location(self.x, self.y, self.angle)))):
-             self.hit = [True, True]
+             self.sim.passable(sim.location(x, y, angle)))):
+            self.hit = [True, True]
 
 
 class Sim(object):
@@ -72,6 +77,9 @@ class Sim(object):
         self.mapheight = len(mapdata)
 
     def __str__(self):
+        """ Allows you to print the sim directly into a nice shiny ASCII
+            graphic :)
+        """
         mapcopy = copy.deepcopy(self.mapdata)
         mapcopy[self.robot.y][self.robot.x] = "R"
 
@@ -93,10 +101,14 @@ class Sim(object):
         return visual
 
     def setrobot(self, robot):
+        """ Set the robot that sim will use.
+        """
         robot.sim = self
         self.robot = robot
 
     def passable(self, xy):
+        """ Return whether a location is passable.
+        """
         x = xy[0]
         y = xy[1]
         return (x >= 0 and y >= 0 and
@@ -105,6 +117,8 @@ class Sim(object):
 
     @staticmethod
     def fixangle(angle):
+        """ Keep angles in the 0-359 range.
+        """
         if angle < 0:
             angle += 360
         if angle > 360:
@@ -115,6 +129,8 @@ class Sim(object):
 
     @staticmethod
     def location(x, y, direction):
+        """ Get a location from an x, y, and direction.
+        """
         if direction == 0:
             y-=1
         if direction == 45:
