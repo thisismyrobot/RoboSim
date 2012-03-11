@@ -132,3 +132,38 @@ You can't go through the edge of the map
     >>> r.turnleft45()
     >>> r.hit
     [False, True]
+
+Simulation
+----------
+
+    >>> import random
+    >>> random.seed(0)
+    >>> locs = []
+    >>> for i in range(20):
+    ...     hits = r.hit
+    ...     if hits[0] and hits[1]:
+    ...         r.turn180()
+    ...     elif hits[0]:
+    ...         r.turnright90()
+    ...     elif hits[1]:
+    ...         r.turnleft90()
+    ...     elif random.random() > 0.75:
+    ...         r.turnright45()
+    ...     r.forward()
+    ...     locs.append((r.x, r.y))
+
+    >>> import copy
+    >>> state = copy.deepcopy(r.state)
+    >>> state[2][3] = 9
+    >>> for i in range(len(locs)):
+    ...     x, y = locs[i][0], locs[i][1]
+    ...     state[y][x] = 8
+    >>> pp.pprint(state)
+    [[0, 0, 0, 0, 8, 8, 0, 0],
+     [0, 0, 0, 8, 0, 8, 0, 0],
+     [0, 0, 0, 9, 0, 8, 8, 8],
+     [0, 0, 0, 0, 1, 0, 0, 8],
+     [0, 0, 0, 0, 1, 0, 8, 0],
+     [0, 0, 0, 0, 1, 8, 0, 0],
+     [0, 0, 0, 0, 0, 0, 8, 0],
+     [0, 0, 0, 0, 0, 0, 0, 8]]

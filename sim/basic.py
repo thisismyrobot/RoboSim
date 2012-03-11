@@ -35,14 +35,11 @@ class Robot:
             angle = 0
         return angle
 
-    def _index(self, x, y):
-        return ((x % self.size) + 1) * ((y * self.size) + 1)
-
     def _passable(self, xy):
         x = xy[0]
         y = xy[1]
-        return (self.mapdata[y][x] in (Robot.ROBOT, Robot.FLOOR) and
-                x >= 0 and y >= 0 and x < self.size and y < self.size)
+        return (x >= 0 and y >= 0 and x < self.size and y < self.size and
+                self.mapdata[y][x] in (Robot.ROBOT, Robot.FLOOR))
 
     def turnleft45(self):
         self.angle = self._fixangle(self.angle - 45)
