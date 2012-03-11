@@ -12,18 +12,20 @@ We need a map.
     ...         [0, 0, 0, 0, 0, 0, 0, 0],
     ...         [0, 0, 0, 0, 0, 0, 0, 0]]
 
+And a sim
+
+    >>> import robosim
+    >>> s = robosim.Sim(amap)
+
 And a robot
 
     >>> import robosim
     >>> robot = robosim.Robot(2, 2)
-
-Now we can setup the static Sim
-
-    >>> robosim.Sim.setup(amap, robot)
+    >>> s.setrobot(robot)
 
 That now has the map set up
 
-    >>> print(robosim.Sim)
+    >>> print(s)
     /--------\
     |00000000|
     |00000000|
@@ -40,29 +42,28 @@ We can use all sorts of sizes for the maps too
     >>> anothermap = [[0, 0, 0, 1, 0, 0, 0, 0],
     ...               [0, 0, 0, 0, 0, 0, 1, 1],
     ...               [0, 0, 1, 0, 0, 0, 0, 0]]
-    >>> robosim.Sim.setup(anothermap, robosim.Robot(2, 1))
-    >>> robosim.Sim.mapwidth
+    >>> s2 = robosim.Sim(anothermap)
+    >>> s2.setrobot(robosim.Robot(2, 1))
+    >>> s2.mapwidth
     8
 
-    >>> robosim.Sim.mapheight
+    >>> s2.mapheight
     3
 
-    >>> print(robosim.Sim)
+    >>> print(s2)
     /--------\
     |00010000|
     |00R00011|
     |00100000|
     \--------/
 
-    >>> robosim.Sim.setup(amap, robot)
-
 Basic movement
 --------------
 
 The robot starts facing upwards so will move that way if sent forwards
 
-    >>> robosim.Sim.robot.forward()
-    >>> print(robosim.Sim)
+    >>> s.robot.forward()
+    >>> print(s)
     /--------\
     |00000000|
     |00R00000|
@@ -76,8 +77,8 @@ The robot starts facing upwards so will move that way if sent forwards
 
 The robot can turn
 
-    >>> robosim.Sim.robot.turnleft45()
-    >>> print(robosim.Sim)
+    >>> s.robot.turnleft45()
+    >>> print(s)
     /--------\
     |00000000|
     |00R00000|
@@ -89,8 +90,8 @@ The robot can turn
     |00000000|
     \--------/
 
-    >>> robosim.Sim.robot.forward()
-    >>> print(robosim.Sim)
+    >>> s.robot.forward()
+    >>> print(s)
     /--------\
     |0R000000|
     |00000000|
@@ -110,29 +111,29 @@ The robot has sensors that register that the robot is againsts things
 like walls - the map edge is a wall. The sensors are at 45 degrees from
 center on the front, face on collisions trigger both.
 
-    >>> robosim.Sim.robot.angle
+    >>> s.robot.angle
     315
 
-    >>> robosim.Sim.fixangle(robosim.Sim.robot.angle - 45)
+    >>> s.fixangle(s.robot.angle - 45)
     270
 
-    >>> robosim.Sim.fixangle(robosim.Sim.robot.angle + 45)
+    >>> s.fixangle(s.robot.angle + 45)
     0
 
-    >>> robosim.Sim.location(robosim.Sim.robot.x, robosim.Sim.robot.y, 315)
+    >>> s.location(s.robot.x, s.robot.y, 315)
     (0, -1)
 
-    >>> robosim.Sim.location(robosim.Sim.robot.x, robosim.Sim.robot.y, 270)
+    >>> s.location(s.robot.x, s.robot.y, 270)
     (0, 0)
 
-    >>> robosim.Sim.location(robosim.Sim.robot.x, robosim.Sim.robot.y, 0)
+    >>> s.location(s.robot.x, s.robot.y, 0)
     (1, -1)
 
-    >>> robosim.Sim.robot.hit
+    >>> s.robot.hit
     [False, True]
 
-    >>> robosim.Sim.robot.turnright45()
-    >>> robosim.Sim.robot.hit
+    >>> s.robot.turnright45()
+    >>> s.robot.hit
     [True, True]
 
 
@@ -141,29 +142,29 @@ Walls
 
 You can't go through the edge of the map
 
-    >>> robosim.Sim.robot.x, robosim.Sim.robot.y
+    >>> s.robot.x, s.robot.y
     (1, 0)
 
-    >>> robosim.Sim.robot.forward()
-    >>> robosim.Sim.robot.x, robosim.Sim.robot.y
+    >>> s.robot.forward()
+    >>> s.robot.x, s.robot.y
     (1, 0)
 
-    >>> robosim.Sim.robot.turnright90();
-    >>> robosim.Sim.robot.turnright45();
-    >>> robosim.Sim.robot.forward()
-    >>> robosim.Sim.robot.forward()
-    >>> robosim.Sim.robot.x, robosim.Sim.robot.y
+    >>> s.robot.turnright90();
+    >>> s.robot.turnright45();
+    >>> s.robot.forward()
+    >>> s.robot.forward()
+    >>> s.robot.x, s.robot.y
     (3, 2)
 
-    >>> robosim.Sim.robot.forward()
-    >>> robosim.Sim.robot.x, robosim.Sim.robot.y
+    >>> s.robot.forward()
+    >>> s.robot.x, s.robot.y
     (3, 2)
 
-    >>> robosim.Sim.robot.hit
+    >>> s.robot.hit
     [True, True]
 
-    >>> robosim.Sim.robot.turnleft45()
-    >>> robosim.Sim.robot.hit
+    >>> s.robot.turnleft45()
+    >>> s.robot.hit
     [False, True]
 
 
@@ -174,17 +175,17 @@ Simulation
     >>> random.seed(0)
     >>> locs = []
     >>> for i in range(20):
-    ...     hits = robosim.Sim.robot.hit
+    ...     hits = s.robot.hit
     ...     if hits[0] and hits[1]:
-    ...         robosim.Sim.robot.turn180()
+    ...         s.robot.turn180()
     ...     elif hits[0]:
-    ...         robosim.Sim.robot.turnright90()
+    ...         s.robot.turnright90()
     ...     elif hits[1]:
-    ...         robosim.Sim.robot.turnleft90()
+    ...         s.robot.turnleft90()
     ...     elif random.random() > 0.75:
-    ...         robosim.Sim.robot.turnright45()
-    ...     robosim.Sim.robot.forward()
-    ...     locs.append((robosim.Sim.robot.x, robosim.Sim.robot.y))
+    ...         s.robot.turnright45()
+    ...     s.robot.forward()
+    ...     locs.append((s.robot.x, s.robot.y))
 
     >>> locs
     [(3, 1), (4, 0), (5, 1), (5, 2), (6, 2), (7, 2), (6, 2), (5, 2), (5, 1), (5, 0), (5, 1), (5, 2), (6, 2), (7, 3), (6, 4), (5, 5), (6, 6), (7, 7), (6, 6), (5, 5)]

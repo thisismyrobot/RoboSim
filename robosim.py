@@ -19,63 +19,45 @@ class Robot(object):
         self.hit = [False, False]
 
     def turnleft45(self):
-        self.angle = Sim.fixangle(self.angle - 45)
+        self.angle = self.sim.fixangle(self.angle - 45)
         self._updatesensors()
 
     def turnright45(self):
-        self.angle = Sim.fixangle(self.angle + 45)
+        self.angle = self.sim.fixangle(self.angle + 45)
         self._updatesensors()
 
     def turnleft90(self):
-        self.angle = Sim.fixangle(self.angle - 90)
+        self.angle = self.sim.fixangle(self.angle - 90)
         self._updatesensors()
 
     def turnright90(self):
-        self.angle = Sim.fixangle(self.angle + 90)
+        self.angle = self.sim.fixangle(self.angle + 90)
         self._updatesensors()
 
     def turn180(self):
-        self.angle = Sim.fixangle(self.angle + 180)
+        self.angle = self.sim.fixangle(self.angle + 180)
         self._updatesensors()
 
     def _updatesensors(self):
         self.hit = [False, False]
-        if not Sim.passable(Sim.location(self.x, self.y, Sim.fixangle(self.angle - 45))):
+        if not self.sim.passable(self.sim.location(self.x, self.y, self.sim.fixangle(self.angle - 45))):
             self.hit[0] = True
-        if not Sim.passable(Sim.location(self.x, self.y, Sim.fixangle(self.angle + 45))):
+        if not self.sim.passable(self.sim.location(self.x, self.y, self.sim.fixangle(self.angle + 45))):
             self.hit[1] = True
         if ((self.hit == [False, False] and
              self.angle % 45 == 0 and not
-             Sim.passable(Sim.location(self.x, self.y, self.angle)))
+             self.sim.passable(self.sim.location(self.x, self.y, self.angle)))
             or
             (self.angle % 45 != 0 and not
-             Sim.passable(Sim.location(self.x, self.y, self.angle)))):
+             self.sim.passable(self.sim.location(self.x, self.y, self.angle)))):
              self.hit = [True, True]
 
     def forward(self):
-        x, y = Sim.location(self.x, self.y, self.angle)
-        if Sim.passable((x, y)):
+        x, y = self.sim.location(self.x, self.y, self.angle)
+        if self.sim.passable((x, y)):
             self.x = x
             self.y = y
         self._updatesensors()
-
-
-class SimMeta(type):
-    def __str__(self):
-        mapcopy = copy.deepcopy(Sim.mapdata)
-        mapcopy[Sim.robot.y][Sim.robot.x] = "R"
-        visual = ""
-        visual += "/".ljust(Sim.mapwidth + 1, "-") + "\\\n"
-        for row in range(Sim.mapheight):
-            for col in range(Sim.mapwidth):
-                if col == 0:
-                    visual += "|"
-                visual += str(mapcopy[row][col])
-                if col == Sim.mapwidth - 1:
-                    visual += "|"
-            visual += "\n"
-        visual += "\\".ljust(Sim.mapwidth + 1, "-") + "/"
-        return visual
 
 
 class Sim(object):
@@ -83,24 +65,39 @@ class Sim(object):
         of 8 directions (chosen by rotating on spot).
     """
 
-    __metaclass__ = SimMeta
-
-    @staticmethod
-    def setup(mapdata, robot):
+    def __init__(self, mapdata):
         """ Setup, load the mapfile.
         """
-        Sim.mapdata = mapdata
-        Sim.mapwidth = len(mapdata[0])
-        Sim.mapheight = len(mapdata)
-        Sim.robot = robot
+        self.mapdata = mapdata
+        self.mapwidth = len(mapdata[0])
+        self.mapheight = len(mapdata)
 
-    @staticmethod
-    def passable(xy):
+    def __str__(self):
+        mapcopy = copy.deepcopy(self.mapdata)
+        mapcopy[self.robot.y][self.robot.x] = "R"
+        visual = ""
+        visual += "/".ljust(self.mapwidth + 1, "-") + "\\\n"
+        for row in range(self.mapheight):
+            for col in range(self.mapwidth):
+                if col == 0:
+                    visual += "|"
+                visual += str(mapcopy[row][col])
+                if col == self.mapwidth - 1:
+                    visual += "|"
+            visual += "\n"
+        visual += "\\".ljust(self.mapwidth + 1, "-") + "/"
+        return visual
+
+    def setrobot(self, robot):
+        robot.sim = self
+        self.robot = robot
+
+    def passable(self, xy):
         x = xy[0]
         y = xy[1]
         return (x >= 0 and y >= 0 and
-                x < Sim.mapwidth and y < Sim.mapheight and
-                Sim.mapdata[y][x] == Terrain.FLOOR)
+                x < self.mapwidth and y < self.mapheight and
+                self.mapdata[y][x] == Terrain.FLOOR)
 
     @staticmethod
     def fixangle(angle):
