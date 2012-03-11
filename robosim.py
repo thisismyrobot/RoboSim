@@ -1,20 +1,24 @@
 import copy
 
 
-class Robot:
-    """ A very basic robot simulator. Robot moves forward or backward, in one
-        of 8 directions (chosen by rotating on spot).
-    """
+class Terrain:
 
     FLOOR = 0
     WALL = 1
     ROBOT = 8
 
+
+class Robot:
+    """ A very basic robot simulator. Robot moves forward or backward, in one
+        of 8 directions (chosen by rotating on spot).
+    """
+
     def __init__(self, size, mapdata, x, y):
         """ Setup, load the mapfile.
         """
-        self.size = size
         self.mapdata = mapdata
+        self.mapwidth = len(self.mapdata)
+        self.mapheight = len(self.mapdata[0])
         self.angle = 0
         self.x = x
         self.y = y
@@ -23,7 +27,7 @@ class Robot:
     @property
     def state(self):
         mapcopy = copy.deepcopy(self.mapdata)
-        mapcopy[self.y][self.x] = Robot.ROBOT
+        mapcopy[self.y][self.x] = Terrain.ROBOT
         return mapcopy
 
     def _fixangle(self, angle):
@@ -38,8 +42,9 @@ class Robot:
     def _passable(self, xy):
         x = xy[0]
         y = xy[1]
-        return (x >= 0 and y >= 0 and x < self.size and y < self.size and
-                self.mapdata[y][x] in (Robot.ROBOT, Robot.FLOOR))
+        return (x >= 0 and y >= 0 and
+                x < self.mapwidth and y < self.mapheight and
+                self.mapdata[y][x] in (Terrain.ROBOT, Terrain.FLOOR))
 
     def turnleft45(self):
         self.angle = self._fixangle(self.angle - 45)
@@ -74,6 +79,7 @@ class Robot:
             (self.angle % 45 != 0 and not
              self._passable(self._location(self.x, self.y, self.angle)))):
              self.hit = [True, True]
+
     def _location(self, x, y, direction):
         if direction == 0:
             y-=1
@@ -103,4 +109,3 @@ class Robot:
             self.x = x
             self.y = y
         self._updatesensors()
-
