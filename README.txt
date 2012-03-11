@@ -33,10 +33,14 @@ Add the robot to the simulation
 Print out a pretty map view
 
     >>> print(sim)
+    X: 2
+    Y: 2
+    DIR: 0
+    <BLANKLINE>
     /--------\
     |00010000|
-    |00R00011|
-    |00100000|
+    |00000011|
+    |00R00000|
     \--------/
 
 Control the robot
