@@ -18,6 +18,7 @@ class Robot:
         self.angle = 0
         self.x = x
         self.y = y
+        self.hit = [False, False]
 
     @property
     def state(self):
@@ -25,64 +26,84 @@ class Robot:
         mapcopy[self.y][self.x] = Robot.ROBOT
         return mapcopy
 
-    def _fixangle(self):
-        if self.angle < 0:
-            self.angle += 360
-        if self.angle > 360:
-            self.angle -= 360
-        if self.angle == 360:
-            self.angle = 0
+    def _fixangle(self, angle):
+        if angle < 0:
+            angle += 360
+        if angle > 360:
+            angle -= 360
+        if angle == 360:
+            angle = 0
+        return angle
 
     def _index(self, x, y):
         return ((x % self.size) + 1) * ((y * self.size) + 1)
 
-    def _passable(self, x, y):
+    def _passable(self, xy):
+        x = xy[0]
+        y = xy[1]
         return (self.mapdata[y][x] in (Robot.ROBOT, Robot.FLOOR) and
                 x >= 0 and y >= 0 and x < self.size and y < self.size)
 
     def turnleft45(self):
-        self.angle -= 45
-        self._fixangle()
+        self.angle = self._fixangle(self.angle - 45)
+        self._updatesensors()
 
     def turnright45(self):
-        self.angle += 45
-        self._fixangle()
+        self.angle = self._fixangle(self.angle + 45)
+        self._updatesensors()
 
     def turnleft90(self):
-        self.angle -= 90
-        self._fixangle()
+        self.angle = self._fixangle(self.angle - 90)
+        self._updatesensors()
 
     def turnright90(self):
-        self.angle += 90
-        self._fixangle()
+        self.angle = self._fixangle(self.angle + 90)
+        self._updatesensors()
 
     def turn180(self):
-        self.angle += 180
-        self._fixangle()
+        self.angle = self._fixangle(self.angle + 180)
+        self._updatesensors()
+
+    def _updatesensors(self):
+        self.hit = [False, False]
+        if not self._passable(self._location(self.x, self.y, self._fixangle(self.angle - 45))):
+            self.hit[0] = True
+        if not self._passable(self._location(self.x, self.y, self._fixangle(self.angle + 45))):
+            self.hit[1] = True
+        if ((self.hit == [False, False] and
+             self.angle % 45 == 0 and not
+             self._passable(self._location(self.x, self.y, self.angle)))
+            or
+            (self.angle % 45 != 0 and not
+             self._passable(self._location(self.x, self.y, self.angle)))):
+             self.hit = [True, True]
+    def _location(self, x, y, direction):
+        if direction == 0:
+            y-=1
+        if direction == 45:
+            x+=1
+            y-=1
+        if direction == 90:
+            x+=1
+        if direction == 135:
+            x+=1
+            y+=1
+        if direction == 180:
+            y+=1
+        if direction == 225:
+            x-=1
+            y+=1
+        if direction == 270:
+            x-=1
+        if direction == 315:
+            x-=1
+            y-=1
+        return x, y
 
     def forward(self):
-        x = self.x
-        y = self.y
-        if self.angle == 0:
-            y-=1
-        if self.angle == 45:
-            x+=1
-            y-=1
-        if self.angle == 90:
-            x+=1
-        if self.angle == 135:
-            x+=1
-            y+=1
-        if self.angle == 180:
-            y+=1
-        if self.angle == 225:
-            x-=1
-            y+=1
-        if self.angle == 270:
-            x-=1
-        if self.angle == 315:
-            x-=1
-            y-=1
-        if self._passable(x, y):
+        x, y = self._location(self.x, self.y, self.angle)
+        if self._passable((x, y)):
             self.x = x
             self.y = y
+        self._updatesensors()
+

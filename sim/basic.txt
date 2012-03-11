@@ -12,7 +12,7 @@ We need a map.
     ...         [0, 0, 0, 0, 0, 0, 0, 0],
     ...         [0, 0, 0, 0, 0, 0, 0, 0]]
 
-And a robot
+And a robot sim
 
     >>> import sim.basic
     >>> r = sim.basic.Robot(8, amap, 2, 2)
@@ -31,7 +31,10 @@ That now has the map set up
      [0, 0, 0, 0, 0, 0, 0, 0],
      [0, 0, 0, 0, 0, 0, 0, 0]]
 
-The robot starts facing upwards so can move that way
+Basic movement
+--------------
+
+The robot starts facing upwards so will move that way if sent forwards
 
     >>> r.forward()
     >>> pp.pprint(r.state)
@@ -68,3 +71,64 @@ The robot can turn
      [0, 0, 0, 0, 0, 0, 0, 0],
      [0, 0, 0, 0, 0, 0, 0, 0]]
 
+Sensors
+-------
+
+The robot has sensors that register that the robot is againsts things like
+walls - the map edge is a wall. The sensors are at 45 degrees from center on
+the front, face on collisions trigger both.
+
+    >>> r.angle
+    315
+
+    >>> r._fixangle(r.angle - 45)
+    270
+
+    >>> r._fixangle(r.angle + 45)
+    0
+
+    >>> r._location(r.x, r.y, 315)
+    (0, -1)
+
+    >>> r._location(r.x, r.y, 270)
+    (0, 0)
+
+    >>> r._location(r.x, r.y, 0)
+    (1, -1)
+
+    >>> r.hit
+    [False, True]
+
+    >>> r.turnright45()
+    >>> r.hit
+    [True, True]
+
+Walls
+-----
+
+You can't go through the edge of the map
+
+    >>> r.x, r.y
+    (1, 0)
+
+    >>> r.forward()
+    >>> r.x, r.y
+    (1, 0)
+
+    >>> r.turnright90();
+    >>> r.turnright45();
+    >>> r.forward()
+    >>> r.forward()
+    >>> r.x, r.y
+    (3, 2)
+
+    >>> r.forward()
+    >>> r.x, r.y
+    (3, 2)
+
+    >>> r.hit
+    [True, True]
+
+    >>> r.turnleft45()
+    >>> r.hit
+    [False, True]
