@@ -31,6 +31,7 @@ That now has the map set up
      [0, 0, 0, 0, 0, 0, 0, 0],
      [0, 0, 0, 0, 0, 0, 0, 0]]
 
+
 Basic movement
 --------------
 
@@ -71,12 +72,13 @@ The robot can turn
      [0, 0, 0, 0, 0, 0, 0, 0],
      [0, 0, 0, 0, 0, 0, 0, 0]]
 
+
 Sensors
 -------
 
-The robot has sensors that register that the robot is againsts things like
-walls - the map edge is a wall. The sensors are at 45 degrees from center on
-the front, face on collisions trigger both.
+The robot has sensors that register that the robot is againsts things
+like walls - the map edge is a wall. The sensors are at 45 degrees from
+center on the front, face on collisions trigger both.
 
     >>> r.angle
     315
@@ -102,6 +104,7 @@ the front, face on collisions trigger both.
     >>> r.turnright45()
     >>> r.hit
     [True, True]
+
 
 Walls
 -----
@@ -132,6 +135,7 @@ You can't go through the edge of the map
     >>> r.turnleft45()
     >>> r.hit
     [False, True]
+
 
 Simulation
 ----------
@@ -167,3 +171,5 @@ Simulation
      [0, 0, 0, 0, 1, 8, 0, 0],
      [0, 0, 0, 0, 0, 0, 8, 0],
      [0, 0, 0, 0, 0, 0, 0, 8]]
+
+
